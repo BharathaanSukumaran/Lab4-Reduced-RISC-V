@@ -14,11 +14,23 @@ VL_INLINE_OPT void VRISC___024root___sequent__TOP__0(VRISC___024root* vlSelf) {
     CData/*4:0*/ __Vdlyvdim0__RISC__DOT__RegFile__DOT__reg_array__v0;
     IData/*31:0*/ __Vdlyvval__RISC__DOT__RegFile__DOT__reg_array__v0;
     CData/*0:0*/ __Vdlyvset__RISC__DOT__RegFile__DOT__reg_array__v0;
+    SData/*11:0*/ __Vdlyvdim0__RISC__DOT__DataMemory__DOT__ram_array__v0;
+    IData/*31:0*/ __Vdlyvval__RISC__DOT__DataMemory__DOT__ram_array__v0;
+    CData/*0:0*/ __Vdlyvset__RISC__DOT__DataMemory__DOT__ram_array__v0;
     // Body
+    __Vdlyvset__RISC__DOT__DataMemory__DOT__ram_array__v0 = 0U;
     __Vdlyvset__RISC__DOT__RegFile__DOT__reg_array__v0 = 0U;
+    if (vlSelf->RISC__DOT__MemWrite) {
+        __Vdlyvval__RISC__DOT__DataMemory__DOT__ram_array__v0 
+            = vlSelf->RISC__DOT__regOp2;
+        __Vdlyvset__RISC__DOT__DataMemory__DOT__ram_array__v0 = 1U;
+        __Vdlyvdim0__RISC__DOT__DataMemory__DOT__ram_array__v0 
+            = (0xfffU & vlSelf->RISC__DOT__ALUout);
+    }
     if (vlSelf->RISC__DOT__RegWrite) {
         __Vdlyvval__RISC__DOT__RegFile__DOT__reg_array__v0 
-            = vlSelf->RISC__DOT__ALUout;
+            = ((IData)(vlSelf->RISC__DOT__ResultSrc)
+                ? vlSelf->RISC__DOT__ReadData : vlSelf->RISC__DOT__ALUout);
         __Vdlyvset__RISC__DOT__RegFile__DOT__reg_array__v0 = 1U;
         __Vdlyvdim0__RISC__DOT__RegFile__DOT__reg_array__v0 
             = (0x1fU & (vlSelf->RISC__DOT__Instr >> 7U));
@@ -29,10 +41,31 @@ VL_INLINE_OPT void VRISC___024root___sequent__TOP__0(VRISC___024root* vlSelf) {
         vlSelf->RISC__DOT__RegFile__DOT__reg_array[__Vdlyvdim0__RISC__DOT__RegFile__DOT__reg_array__v0] 
             = __Vdlyvval__RISC__DOT__RegFile__DOT__reg_array__v0;
     }
+    if ((1U & (~ (IData)(vlSelf->RISC__DOT__MemWrite)))) {
+        vlSelf->RISC__DOT__ReadData = vlSelf->RISC__DOT__DataMemory__DOT__ram_array
+            [(0xfffU & vlSelf->RISC__DOT__ALUout)];
+    }
     vlSelf->a0 = vlSelf->RISC__DOT__RegFile__DOT__reg_array
         [0xaU];
     vlSelf->RISC__DOT__Instr = vlSelf->RISC__DOT__Instr_mem__DOT__rom_array
         [vlSelf->RISC__DOT__PC];
+    if (__Vdlyvset__RISC__DOT__DataMemory__DOT__ram_array__v0) {
+        vlSelf->RISC__DOT__DataMemory__DOT__ram_array[__Vdlyvdim0__RISC__DOT__DataMemory__DOT__ram_array__v0] 
+            = __Vdlyvval__RISC__DOT__DataMemory__DOT__ram_array__v0;
+    }
+    if ((3U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
+        if ((2U == (7U & (vlSelf->RISC__DOT__Instr 
+                          >> 0xcU)))) {
+            vlSelf->RISC__DOT__MemWrite = 0U;
+        }
+    } else if ((0x13U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
+        if ((0U == (7U & (vlSelf->RISC__DOT__Instr 
+                          >> 0xcU)))) {
+            vlSelf->RISC__DOT__MemWrite = 0U;
+        }
+    }
+    vlSelf->RISC__DOT__regOp2 = vlSelf->RISC__DOT__RegFile__DOT__reg_array
+        [(0x1fU & (vlSelf->RISC__DOT__Instr >> 0x14U))];
     vlSelf->RISC__DOT__ALUop1 = vlSelf->RISC__DOT__RegFile__DOT__reg_array
         [(0x1fU & (vlSelf->RISC__DOT__Instr >> 0xfU))];
 }
@@ -44,49 +77,84 @@ VL_INLINE_OPT void VRISC___024root___combo__TOP__0(VRISC___024root* vlSelf) {
     // Body
     vlSelf->RISC__DOT__EQ = (vlSelf->RISC__DOT__ALUop1 
                              == vlSelf->RISC__DOT__ALUop2);
-    if ((0x13U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
-        if ((0U == (7U & (vlSelf->RISC__DOT__Instr 
+    if ((3U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
+        if ((2U == (7U & (vlSelf->RISC__DOT__Instr 
                           >> 0xcU)))) {
+            vlSelf->RISC__DOT__ResultSrc = 1U;
             vlSelf->RISC__DOT__RegWrite = 1U;
             vlSelf->RISC__DOT__ALUsrc = 1U;
-            vlSelf->RISC__DOT__ALUctrl = 0U;
             vlSelf->RISC__DOT__PCsrc = 0U;
+            vlSelf->RISC__DOT__ALUctrl = 0U;
             vlSelf->RISC__DOT__ImmSrc = (vlSelf->RISC__DOT__Instr 
                                          >> 0x14U);
+            vlSelf->RISC__DOT__ImmOp = (((- (IData)(
+                                                    (1U 
+                                                     & ((IData)(vlSelf->RISC__DOT__ImmSrc) 
+                                                        >> 0xcU)))) 
+                                         << 0xdU) | (IData)(vlSelf->RISC__DOT__ImmSrc));
+        }
+    } else if ((0x13U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
+        if ((0U == (7U & (vlSelf->RISC__DOT__Instr 
+                          >> 0xcU)))) {
+            vlSelf->RISC__DOT__ResultSrc = 0U;
+            vlSelf->RISC__DOT__RegWrite = 1U;
+            vlSelf->RISC__DOT__ALUsrc = 1U;
+            vlSelf->RISC__DOT__PCsrc = 0U;
+            vlSelf->RISC__DOT__ALUctrl = 0U;
+            vlSelf->RISC__DOT__ImmSrc = (vlSelf->RISC__DOT__Instr 
+                                         >> 0x14U);
+            vlSelf->RISC__DOT__ImmOp = (((- (IData)(
+                                                    (1U 
+                                                     & ((IData)(vlSelf->RISC__DOT__ImmSrc) 
+                                                        >> 0xcU)))) 
+                                         << 0xdU) | (IData)(vlSelf->RISC__DOT__ImmSrc));
         }
     } else if ((0x63U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
         if ((1U == (7U & (vlSelf->RISC__DOT__Instr 
                           >> 0xcU)))) {
             if ((1U & (~ (IData)(vlSelf->RISC__DOT__EQ)))) {
+                vlSelf->RISC__DOT__ResultSrc = 0U;
                 vlSelf->RISC__DOT__RegWrite = 1U;
                 vlSelf->RISC__DOT__ALUsrc = 0U;
-                vlSelf->RISC__DOT__ALUctrl = 7U;
                 vlSelf->RISC__DOT__PCsrc = 1U;
-                vlSelf->RISC__DOT__ImmSrc = ((0x800U 
+                vlSelf->RISC__DOT__ALUctrl = 7U;
+                vlSelf->RISC__DOT__ImmSrc = ((0x1000U 
                                               & (vlSelf->RISC__DOT__Instr 
-                                                 << 4U)) 
-                                             | ((0x7e0U 
+                                                 >> 0x13U)) 
+                                             | ((0x800U 
                                                  & (vlSelf->RISC__DOT__Instr 
-                                                    >> 0x14U)) 
-                                                | (0x1eU 
-                                                   & (vlSelf->RISC__DOT__Instr 
-                                                      >> 7U))));
+                                                    << 4U)) 
+                                                | ((0x7e0U 
+                                                    & (vlSelf->RISC__DOT__Instr 
+                                                       >> 0x14U)) 
+                                                   | (0x1eU 
+                                                      & (vlSelf->RISC__DOT__Instr 
+                                                         >> 7U)))));
             }
             if (vlSelf->RISC__DOT__EQ) {
+                vlSelf->RISC__DOT__ResultSrc = 0U;
                 vlSelf->RISC__DOT__RegWrite = 1U;
                 vlSelf->RISC__DOT__ALUsrc = 0U;
-                vlSelf->RISC__DOT__ALUctrl = 7U;
                 vlSelf->RISC__DOT__PCsrc = 0U;
-                vlSelf->RISC__DOT__ImmSrc = ((0x800U 
+                vlSelf->RISC__DOT__ALUctrl = 7U;
+                vlSelf->RISC__DOT__ImmSrc = ((0x1000U 
                                               & (vlSelf->RISC__DOT__Instr 
-                                                 << 4U)) 
-                                             | ((0x7e0U 
+                                                 >> 0x13U)) 
+                                             | ((0x800U 
                                                  & (vlSelf->RISC__DOT__Instr 
-                                                    >> 0x14U)) 
-                                                | (0x1eU 
-                                                   & (vlSelf->RISC__DOT__Instr 
-                                                      >> 7U))));
+                                                    << 4U)) 
+                                                | ((0x7e0U 
+                                                    & (vlSelf->RISC__DOT__Instr 
+                                                       >> 0x14U)) 
+                                                   | (0x1eU 
+                                                      & (vlSelf->RISC__DOT__Instr 
+                                                         >> 7U)))));
             }
+            vlSelf->RISC__DOT__ImmOp = (((- (IData)(
+                                                    (1U 
+                                                     & ((IData)(vlSelf->RISC__DOT__ImmSrc) 
+                                                        >> 0xcU)))) 
+                                         << 0xdU) | (IData)(vlSelf->RISC__DOT__ImmSrc));
         }
     }
     if ((0U == (IData)(vlSelf->RISC__DOT__ALUctrl))) {
@@ -105,39 +173,9 @@ VL_INLINE_OPT void VRISC___024root___combo__TOP__0(VRISC___024root* vlSelf) {
         vlSelf->RISC__DOT__ALUout = (vlSelf->RISC__DOT__ALUop1 
                                      < vlSelf->RISC__DOT__ALUop2);
     }
-    if ((3U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
-        if ((2U == (7U & (vlSelf->RISC__DOT__Instr 
-                          >> 0xcU)))) {
-            vlSelf->RISC__DOT__ImmOp = (((- (IData)(
-                                                    (1U 
-                                                     & ((IData)(vlSelf->RISC__DOT__ImmSrc) 
-                                                        >> 0xbU)))) 
-                                         << 0xcU) | (IData)(vlSelf->RISC__DOT__ImmSrc));
-        }
-    } else if ((0x13U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
-        if ((0U == (7U & (vlSelf->RISC__DOT__Instr 
-                          >> 0xcU)))) {
-            vlSelf->RISC__DOT__ImmOp = (((- (IData)(
-                                                    (1U 
-                                                     & ((IData)(vlSelf->RISC__DOT__ImmSrc) 
-                                                        >> 0xbU)))) 
-                                         << 0xcU) | (IData)(vlSelf->RISC__DOT__ImmSrc));
-        }
-    } else if ((0x63U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
-        if ((1U == (7U & (vlSelf->RISC__DOT__Instr 
-                          >> 0xcU)))) {
-            vlSelf->RISC__DOT__ImmOp = (((- (IData)(
-                                                    (1U 
-                                                     & ((IData)(vlSelf->RISC__DOT__ImmSrc) 
-                                                        >> 0xbU)))) 
-                                         << 0xcU) | (IData)(vlSelf->RISC__DOT__ImmSrc));
-        }
-    }
     vlSelf->RISC__DOT__ALUop2 = ((IData)(vlSelf->RISC__DOT__ALUsrc)
                                   ? vlSelf->RISC__DOT__ImmOp
-                                  : vlSelf->RISC__DOT__RegFile__DOT__reg_array
-                                 [(0x1fU & (vlSelf->RISC__DOT__Instr 
-                                            >> 0x14U))]);
+                                  : vlSelf->RISC__DOT__regOp2);
     vlSelf->RISC__DOT__next_PC = (0xffU & ((IData)(vlSelf->RISC__DOT__PCsrc)
                                             ? (vlSelf->RISC__DOT__ImmOp 
                                                + (IData)(vlSelf->RISC__DOT__PC))
@@ -178,7 +216,7 @@ VL_INLINE_OPT QData VRISC___024root___change_request_1(VRISC___024root* vlSelf) 
     // Change detection
     QData __req = false;  // Logically a bool
     __req |= ((vlSelf->RISC__DOT__ALUop2 ^ vlSelf->__Vchglast__TOP__RISC__DOT__ALUop2));
-    VL_DEBUG_IF( if(__req && ((vlSelf->RISC__DOT__ALUop2 ^ vlSelf->__Vchglast__TOP__RISC__DOT__ALUop2))) VL_DBG_MSGF("        CHANGE: RISC.sv:71: RISC.ALUop2\n"); );
+    VL_DEBUG_IF( if(__req && ((vlSelf->RISC__DOT__ALUop2 ^ vlSelf->__Vchglast__TOP__RISC__DOT__ALUop2))) VL_DBG_MSGF("        CHANGE: RISC.sv:72: RISC.ALUop2\n"); );
     // Final
     vlSelf->__Vchglast__TOP__RISC__DOT__ALUop2 = vlSelf->RISC__DOT__ALUop2;
     return __req;

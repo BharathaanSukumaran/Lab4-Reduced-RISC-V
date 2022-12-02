@@ -12,6 +12,7 @@ VL_ATTR_COLD void VRISC___024root___initial__TOP__0(VRISC___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    VRISC___024root___initial__TOP__0\n"); );
     // Init
     VlWide<3>/*95:0*/ __Vtemp_h550577ed__0;
+    VlWide<3>/*95:0*/ __Vtemp_h550577ed__1;
     // Body
     VL_WRITEF("Loading data to ROM\n");
     __Vtemp_h550577ed__0[0U] = 0x2e6d656dU;
@@ -19,6 +20,13 @@ VL_ATTR_COLD void VRISC___024root___initial__TOP__0(VRISC___024root* vlSelf) {
     __Vtemp_h550577ed__0[2U] = 0x637075U;
     VL_READMEM_N(true, 32, 256, 0, VL_CVT_PACK_STR_NW(3, __Vtemp_h550577ed__0)
                  ,  &(vlSelf->RISC__DOT__Instr_mem__DOT__rom_array)
+                 , 0, ~0ULL);
+    VL_WRITEF("Loading data to RAM\n");
+    __Vtemp_h550577ed__1[0U] = 0x2e6d656dU;
+    __Vtemp_h550577ed__1[1U] = 0x5f696e73U;
+    __Vtemp_h550577ed__1[2U] = 0x637075U;
+    VL_READMEM_N(true, 32, 4096, 0, VL_CVT_PACK_STR_NW(3, __Vtemp_h550577ed__1)
+                 ,  &(vlSelf->RISC__DOT__DataMemory__DOT__ram_array)
                  , 0, ~0ULL);
 }
 
@@ -31,53 +39,92 @@ VL_ATTR_COLD void VRISC___024root___settle__TOP__0(VRISC___024root* vlSelf) {
         [0xaU];
     vlSelf->RISC__DOT__Instr = vlSelf->RISC__DOT__Instr_mem__DOT__rom_array
         [vlSelf->RISC__DOT__PC];
+    vlSelf->RISC__DOT__regOp2 = vlSelf->RISC__DOT__RegFile__DOT__reg_array
+        [(0x1fU & (vlSelf->RISC__DOT__Instr >> 0x14U))];
     vlSelf->RISC__DOT__ALUop1 = vlSelf->RISC__DOT__RegFile__DOT__reg_array
         [(0x1fU & (vlSelf->RISC__DOT__Instr >> 0xfU))];
     vlSelf->RISC__DOT__EQ = (vlSelf->RISC__DOT__ALUop1 
                              == vlSelf->RISC__DOT__ALUop2);
-    if ((0x13U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
-        if ((0U == (7U & (vlSelf->RISC__DOT__Instr 
+    if ((3U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
+        if ((2U == (7U & (vlSelf->RISC__DOT__Instr 
                           >> 0xcU)))) {
+            vlSelf->RISC__DOT__MemWrite = 0U;
+            vlSelf->RISC__DOT__ResultSrc = 1U;
             vlSelf->RISC__DOT__RegWrite = 1U;
             vlSelf->RISC__DOT__ALUsrc = 1U;
-            vlSelf->RISC__DOT__ALUctrl = 0U;
             vlSelf->RISC__DOT__PCsrc = 0U;
+            vlSelf->RISC__DOT__ALUctrl = 0U;
             vlSelf->RISC__DOT__ImmSrc = (vlSelf->RISC__DOT__Instr 
                                          >> 0x14U);
+            vlSelf->RISC__DOT__ImmOp = (((- (IData)(
+                                                    (1U 
+                                                     & ((IData)(vlSelf->RISC__DOT__ImmSrc) 
+                                                        >> 0xcU)))) 
+                                         << 0xdU) | (IData)(vlSelf->RISC__DOT__ImmSrc));
+        }
+    } else if ((0x13U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
+        if ((0U == (7U & (vlSelf->RISC__DOT__Instr 
+                          >> 0xcU)))) {
+            vlSelf->RISC__DOT__MemWrite = 0U;
+            vlSelf->RISC__DOT__ResultSrc = 0U;
+            vlSelf->RISC__DOT__RegWrite = 1U;
+            vlSelf->RISC__DOT__ALUsrc = 1U;
+            vlSelf->RISC__DOT__PCsrc = 0U;
+            vlSelf->RISC__DOT__ALUctrl = 0U;
+            vlSelf->RISC__DOT__ImmSrc = (vlSelf->RISC__DOT__Instr 
+                                         >> 0x14U);
+            vlSelf->RISC__DOT__ImmOp = (((- (IData)(
+                                                    (1U 
+                                                     & ((IData)(vlSelf->RISC__DOT__ImmSrc) 
+                                                        >> 0xcU)))) 
+                                         << 0xdU) | (IData)(vlSelf->RISC__DOT__ImmSrc));
         }
     } else if ((0x63U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
         if ((1U == (7U & (vlSelf->RISC__DOT__Instr 
                           >> 0xcU)))) {
             if ((1U & (~ (IData)(vlSelf->RISC__DOT__EQ)))) {
+                vlSelf->RISC__DOT__ResultSrc = 0U;
                 vlSelf->RISC__DOT__RegWrite = 1U;
                 vlSelf->RISC__DOT__ALUsrc = 0U;
-                vlSelf->RISC__DOT__ALUctrl = 7U;
                 vlSelf->RISC__DOT__PCsrc = 1U;
-                vlSelf->RISC__DOT__ImmSrc = ((0x800U 
+                vlSelf->RISC__DOT__ALUctrl = 7U;
+                vlSelf->RISC__DOT__ImmSrc = ((0x1000U 
                                               & (vlSelf->RISC__DOT__Instr 
-                                                 << 4U)) 
-                                             | ((0x7e0U 
+                                                 >> 0x13U)) 
+                                             | ((0x800U 
                                                  & (vlSelf->RISC__DOT__Instr 
-                                                    >> 0x14U)) 
-                                                | (0x1eU 
-                                                   & (vlSelf->RISC__DOT__Instr 
-                                                      >> 7U))));
+                                                    << 4U)) 
+                                                | ((0x7e0U 
+                                                    & (vlSelf->RISC__DOT__Instr 
+                                                       >> 0x14U)) 
+                                                   | (0x1eU 
+                                                      & (vlSelf->RISC__DOT__Instr 
+                                                         >> 7U)))));
             }
             if (vlSelf->RISC__DOT__EQ) {
+                vlSelf->RISC__DOT__ResultSrc = 0U;
                 vlSelf->RISC__DOT__RegWrite = 1U;
                 vlSelf->RISC__DOT__ALUsrc = 0U;
-                vlSelf->RISC__DOT__ALUctrl = 7U;
                 vlSelf->RISC__DOT__PCsrc = 0U;
-                vlSelf->RISC__DOT__ImmSrc = ((0x800U 
+                vlSelf->RISC__DOT__ALUctrl = 7U;
+                vlSelf->RISC__DOT__ImmSrc = ((0x1000U 
                                               & (vlSelf->RISC__DOT__Instr 
-                                                 << 4U)) 
-                                             | ((0x7e0U 
+                                                 >> 0x13U)) 
+                                             | ((0x800U 
                                                  & (vlSelf->RISC__DOT__Instr 
-                                                    >> 0x14U)) 
-                                                | (0x1eU 
-                                                   & (vlSelf->RISC__DOT__Instr 
-                                                      >> 7U))));
+                                                    << 4U)) 
+                                                | ((0x7e0U 
+                                                    & (vlSelf->RISC__DOT__Instr 
+                                                       >> 0x14U)) 
+                                                   | (0x1eU 
+                                                      & (vlSelf->RISC__DOT__Instr 
+                                                         >> 7U)))));
             }
+            vlSelf->RISC__DOT__ImmOp = (((- (IData)(
+                                                    (1U 
+                                                     & ((IData)(vlSelf->RISC__DOT__ImmSrc) 
+                                                        >> 0xcU)))) 
+                                         << 0xdU) | (IData)(vlSelf->RISC__DOT__ImmSrc));
         }
     }
     if ((0U == (IData)(vlSelf->RISC__DOT__ALUctrl))) {
@@ -96,39 +143,9 @@ VL_ATTR_COLD void VRISC___024root___settle__TOP__0(VRISC___024root* vlSelf) {
         vlSelf->RISC__DOT__ALUout = (vlSelf->RISC__DOT__ALUop1 
                                      < vlSelf->RISC__DOT__ALUop2);
     }
-    if ((3U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
-        if ((2U == (7U & (vlSelf->RISC__DOT__Instr 
-                          >> 0xcU)))) {
-            vlSelf->RISC__DOT__ImmOp = (((- (IData)(
-                                                    (1U 
-                                                     & ((IData)(vlSelf->RISC__DOT__ImmSrc) 
-                                                        >> 0xbU)))) 
-                                         << 0xcU) | (IData)(vlSelf->RISC__DOT__ImmSrc));
-        }
-    } else if ((0x13U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
-        if ((0U == (7U & (vlSelf->RISC__DOT__Instr 
-                          >> 0xcU)))) {
-            vlSelf->RISC__DOT__ImmOp = (((- (IData)(
-                                                    (1U 
-                                                     & ((IData)(vlSelf->RISC__DOT__ImmSrc) 
-                                                        >> 0xbU)))) 
-                                         << 0xcU) | (IData)(vlSelf->RISC__DOT__ImmSrc));
-        }
-    } else if ((0x63U == (0x7fU & vlSelf->RISC__DOT__Instr))) {
-        if ((1U == (7U & (vlSelf->RISC__DOT__Instr 
-                          >> 0xcU)))) {
-            vlSelf->RISC__DOT__ImmOp = (((- (IData)(
-                                                    (1U 
-                                                     & ((IData)(vlSelf->RISC__DOT__ImmSrc) 
-                                                        >> 0xbU)))) 
-                                         << 0xcU) | (IData)(vlSelf->RISC__DOT__ImmSrc));
-        }
-    }
     vlSelf->RISC__DOT__ALUop2 = ((IData)(vlSelf->RISC__DOT__ALUsrc)
                                   ? vlSelf->RISC__DOT__ImmOp
-                                  : vlSelf->RISC__DOT__RegFile__DOT__reg_array
-                                 [(0x1fU & (vlSelf->RISC__DOT__Instr 
-                                            >> 0x14U))]);
+                                  : vlSelf->RISC__DOT__regOp2);
     vlSelf->RISC__DOT__next_PC = (0xffU & ((IData)(vlSelf->RISC__DOT__PCsrc)
                                             ? (vlSelf->RISC__DOT__ImmOp 
                                                + (IData)(vlSelf->RISC__DOT__PC))
@@ -170,8 +187,6 @@ VL_ATTR_COLD void VRISC___024root___ctor_var_reset(VRISC___024root* vlSelf) {
     vlSelf->clk = VL_RAND_RESET_I(1);
     vlSelf->rst = VL_RAND_RESET_I(1);
     vlSelf->a0 = VL_RAND_RESET_I(32);
-    vlSelf->a1 = VL_RAND_RESET_I(32);
-    vlSelf->t1 = VL_RAND_RESET_I(32);
     vlSelf->RISC__DOT__next_PC = VL_RAND_RESET_I(8);
     vlSelf->RISC__DOT__ImmOp = VL_RAND_RESET_I(32);
     vlSelf->RISC__DOT__PCsrc = VL_RAND_RESET_I(1);
@@ -181,15 +196,23 @@ VL_ATTR_COLD void VRISC___024root___ctor_var_reset(VRISC___024root* vlSelf) {
     vlSelf->RISC__DOT__EQ = VL_RAND_RESET_I(1);
     vlSelf->RISC__DOT__ALUctrl = VL_RAND_RESET_I(3);
     vlSelf->RISC__DOT__ALUsrc = VL_RAND_RESET_I(1);
-    vlSelf->RISC__DOT__ImmSrc = VL_RAND_RESET_I(12);
+    vlSelf->RISC__DOT__ImmSrc = VL_RAND_RESET_I(13);
+    vlSelf->RISC__DOT__MemWrite = VL_RAND_RESET_I(1);
+    vlSelf->RISC__DOT__ResultSrc = VL_RAND_RESET_I(1);
     vlSelf->RISC__DOT__ALUout = VL_RAND_RESET_I(32);
     vlSelf->RISC__DOT__ALUop1 = VL_RAND_RESET_I(32);
     vlSelf->RISC__DOT__ALUop2 = VL_RAND_RESET_I(32);
+    vlSelf->RISC__DOT__regOp2 = VL_RAND_RESET_I(32);
+    vlSelf->RISC__DOT__WD3 = VL_RAND_RESET_I(32);
+    vlSelf->RISC__DOT__ReadData = VL_RAND_RESET_I(32);
     for (int __Vi0=0; __Vi0<256; ++__Vi0) {
         vlSelf->RISC__DOT__Instr_mem__DOT__rom_array[__Vi0] = VL_RAND_RESET_I(32);
     }
     for (int __Vi0=0; __Vi0<32; ++__Vi0) {
         vlSelf->RISC__DOT__RegFile__DOT__reg_array[__Vi0] = VL_RAND_RESET_I(32);
+    }
+    for (int __Vi0=0; __Vi0<4096; ++__Vi0) {
+        vlSelf->RISC__DOT__DataMemory__DOT__ram_array[__Vi0] = VL_RAND_RESET_I(32);
     }
     vlSelf->__Vchglast__TOP__RISC__DOT__ALUop2 = VL_RAND_RESET_I(32);
     for (int __Vi0=0; __Vi0<3; ++__Vi0) {

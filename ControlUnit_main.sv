@@ -6,8 +6,10 @@ module ControlUnit_main #(
     output logic RegWrite,
     output logic [2:0] ALUctrl,
     output logic ALUsrc,
-    output logic [11:0] ImmSrc,
-    output logic PCsrc
+    output logic [12:0] ImmSrc,
+    output logic PCsrc,
+    output logic MemWrite,
+    output logic ResultSrc
 );
 logic [6:0] op = Instr[6:0];
 logic [2:0] func3 = Instr[14:12];
@@ -19,22 +21,26 @@ always_comb begin
                     
 //                 endcase
 //            endcase
-      // 7'd3: case(func3)
-      //             3'b010: begin  
-      //                   RegWrite = 1;
-      //                   ALUctrl = 3'b000;
-      //                   ALUsrc = 1;
-      //                   PCsrc = 0;
-      //                   ImmSrc =  Instr[31:20];
-      //             end
-      //       endcase
+      7'd3: case(func3)
+                  3'b010: begin  
+                        RegWrite = 1;
+                        ALUctrl = 3'b000;
+                        ALUsrc = 1;
+                        PCsrc = 0;
+                        ImmSrc =  {1'b0,Instr[31:20]};
+                        MemWrite = 0;
+                        ResultSrc = 1;
+                  end
+            endcase
       7'd19:case(func3)
                   3'b000: begin 
                         RegWrite = 1;
                         ALUctrl = 3'b000;
                         ALUsrc = 1;
                         PCsrc = 0;
-                        ImmSrc =  Instr[31:20];
+                        ImmSrc =  {1'b0,Instr[31:20]};
+                        MemWrite = 0;
+                        ResultSrc = 0;
                   end 
                   //     case (func7)
                         
@@ -50,6 +56,7 @@ always_comb begin
                               ALUsrc = 0;
                               PCsrc = 1;
                               ImmSrc = {Instr[31],Instr[7],Instr[30:25],Instr[11:8],1'b0};
+                              ResultSrc = 0;
                         end
 
                         if (EQ == 1) begin 
@@ -58,6 +65,7 @@ always_comb begin
                               ALUsrc = 0;
                               PCsrc = 0;
                               ImmSrc = {Instr[31],Instr[7],Instr[30:25],Instr[11:8],1'b0};
+                              ResultSrc = 0;
                         end
                   end 
             endcase

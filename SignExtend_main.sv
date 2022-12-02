@@ -1,6 +1,6 @@
 module SignExtend_main #(
     INSTR_WIDTH = 32,
-    DATA_WIDTH = 12
+    DATA_WIDTH = 13
 ) (
     input logic [INSTR_WIDTH-1:0] Instr,
     input logic [DATA_WIDTH-1:0] ImmSrc,

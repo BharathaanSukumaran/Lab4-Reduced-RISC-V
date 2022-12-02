@@ -3,18 +3,16 @@ module RISC #(
 )(
     input logic clk,
     input logic rst,
-    output logic [DATA_WIDTH-1:0] a0,
-    output logic [DATA_WIDTH-1:0] a1,
-    output logic [DATA_WIDTH-1:0] t1
+    output logic [DATA_WIDTH-1:0] a0
 );
 
 
 
 // PCTop
-wire [7:0] next_PC;
-wire [DATA_WIDTH-1:0] ImmOp;
-wire PCsrc;
-wire [7:0] PC;
+logic [7:0] next_PC;
+logic [DATA_WIDTH-1:0] ImmOp;
+logic PCsrc;
+logic [7:0] PC;
 
 muxPC PCMux(
 .PCsrc(PCsrc),
@@ -38,13 +36,14 @@ Instr_mem_main Instr_mem(
 //end
 
 //Control Unit
-wire[DATA_WIDTH-1:0] Instr;
-wire RegWrite;
-wire EQ;
-wire [2:0] ALUctrl;
-wire ALUsrc;
-wire [11:0] ImmSrc;
-wire PCsrc;
+logic[DATA_WIDTH-1:0] Instr;
+logic RegWrite;
+logic EQ;
+logic [2:0] ALUctrl;
+logic ALUsrc;
+logic [12:0] ImmSrc;
+logic MemWrite;
+logic ResultSrc;
 
 ControlUnit_main ControlUnit(
 .Instr(Instr),
@@ -53,7 +52,9 @@ ControlUnit_main ControlUnit(
 .ALUctrl(ALUctrl),
 .ALUsrc(ALUsrc),
 .ImmSrc(ImmSrc),
-.PCsrc(PCsrc)
+.PCsrc(PCsrc),
+.MemWrite(MemWrite),
+.ResultSrc(ResultSrc)
 );
 //end
 
@@ -66,28 +67,26 @@ SignExtend_main SignExtend(
 //end
 
 //ALU
-wire [DATA_WIDTH-1:0] ALUout;
-wire [DATA_WIDTH-1:0] ALUop1;
-wire [DATA_WIDTH-1:0] ALUop2;
-wire [DATA_WIDTH-1:0] regOp2;
+logic [DATA_WIDTH-1:0] ALUout;
+logic [DATA_WIDTH-1:0] ALUop1;
+logic [DATA_WIDTH-1:0] ALUop2;
+logic [DATA_WIDTH-1:0] regOp2;
+logic [DATA_WIDTH-1:0] WD3;
 
-
-register_main RegFile(
-.clk(clk),
-.Instr(Instr),
-.WE3(RegWrite),
-.WD3(ALUout),
-.RD1(ALUop1),
-.RD2(regOp2),
-.a0(a0)
-);
-
-
-muxALU ALUMux(
+muxALU ALUmux(
 .ALUsrc(ALUsrc),
 .regOp2(regOp2),
 .ImmOp(ImmOp),
 .ALUop2(ALUop2)
+);
+register_main RegFile(
+.clk(clk),
+.Instr(Instr),
+.WE3(RegWrite),
+.WD3(Result),
+.RD1(ALUop1),
+.RD2(regOp2),
+.a0(a0)
 );
 
 alu_main ALU(
@@ -96,6 +95,29 @@ alu_main ALU(
 .ALUop2(ALUop2),
 .SUM(ALUout),
 .EQ(EQ)
+);
+//end
+
+// RAM
+logic [DATA_WIDTH-1:0] ReadData;
+
+ram_main DataMemory(
+.clk(clk),
+.MemWrite(MemWrite),
+.A(ALUout),
+.WD(regOp2),
+.RD(ReadData)
+);
+///end
+
+//Result MUX
+logic [DATA_WIDTH-1:0] Result;
+ 
+result_mux_main result_mux(
+.ResultSrc(ResultSrc),
+.ALUResult(ALUout),
+.ReadData(ReadData),
+.Result(Result)
 );
 //end
 endmodule 

@@ -14,8 +14,6 @@ VRISC::VRISC(VerilatedContext* _vcontextp__, const char* _vcname__)
     , clk{vlSymsp->TOP.clk}
     , rst{vlSymsp->TOP.rst}
     , a0{vlSymsp->TOP.a0}
-    , a1{vlSymsp->TOP.a1}
-    , t1{vlSymsp->TOP.t1}
     , rootp{&(vlSymsp->TOP)}
 {
     // Register model with the context
