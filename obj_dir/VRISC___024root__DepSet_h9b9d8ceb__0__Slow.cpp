@@ -12,7 +12,7 @@ VL_ATTR_COLD void VRISC___024root___initial__TOP__0(VRISC___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    VRISC___024root___initial__TOP__0\n"); );
     // Init
     VlWide<3>/*95:0*/ __Vtemp_h550577ed__0;
-    VlWide<3>/*95:0*/ __Vtemp_h550577ed__1;
+    VlWide<3>/*95:0*/ __Vtemp_ha00c3b92__0;
     // Body
     VL_WRITEF("Loading data to ROM\n");
     __Vtemp_h550577ed__0[0U] = 0x2e6d656dU;
@@ -22,10 +22,10 @@ VL_ATTR_COLD void VRISC___024root___initial__TOP__0(VRISC___024root* vlSelf) {
                  ,  &(vlSelf->RISC__DOT__Instr_mem__DOT__rom_array)
                  , 0, ~0ULL);
     VL_WRITEF("Loading data to RAM\n");
-    __Vtemp_h550577ed__1[0U] = 0x2e6d656dU;
-    __Vtemp_h550577ed__1[1U] = 0x5f696e73U;
-    __Vtemp_h550577ed__1[2U] = 0x637075U;
-    VL_READMEM_N(true, 32, 4096, 0, VL_CVT_PACK_STR_NW(3, __Vtemp_h550577ed__1)
+    __Vtemp_ha00c3b92__0[0U] = 0x2e6d656dU;
+    __Vtemp_ha00c3b92__0[1U] = 0x65726f6dU;
+    __Vtemp_ha00c3b92__0[2U] = 0x73696eU;
+    VL_READMEM_N(true, 32, 4096, 0, VL_CVT_PACK_STR_NW(3, __Vtemp_ha00c3b92__0)
                  ,  &(vlSelf->RISC__DOT__DataMemory__DOT__ram_array)
                  , 0, ~0ULL);
 }

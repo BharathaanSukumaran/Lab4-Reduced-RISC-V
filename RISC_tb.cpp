@@ -15,8 +15,8 @@ int main(int argc, char **argv, char **env){
     top->trace(tfp,99);
     tfp->open("VRISC-V.vcd");
     // init Vbuddy
-    // if (vbdOpen()!=1) return (-1);
-    // vbdHeader("RISC-V");
+    if (vbdOpen()!=1) return (-1);
+    vbdHeader("RISC-V");
     // initialise simulation outputs
     top->clk =1;
     top->rst=0;
@@ -40,11 +40,14 @@ int main(int argc, char **argv, char **env){
         // vbdHex(1, int(top->a0) & 0xF);
         // vbdCycle(i+1);
         // top->clk =1;
+        vbdPlot(int(top->a0),0,255);
+        vbdCycle(i+1);
+
         
         if(Verilated::gotFinish()) exit(0);
         
     }
-    // vbdClose();
+    vbdClose();
     tfp->close();
     exit(0);
 

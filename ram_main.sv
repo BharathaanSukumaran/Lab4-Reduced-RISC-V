@@ -13,7 +13,7 @@ logic [DATA_WIDTH-1:0] ram_array [2**ADDRESS_WIDTH-1:0];
 
 initial begin
     $display("Loading data to RAM");
-    $readmemh("cpu_ins.mem",ram_array);
+    $readmemh("sinerom.mem",ram_array);
 end
 
 always_ff @(posedge clk) begin
